@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whoop Whoop Emergency!</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Pacifico&display=swap');
+
+        :root {
+            --background: #0d080b;
+            --card: #171014;
+            --card-light: #21141a;
+            --pink: #ff6f91;
+            --pink-light: #ff9eb4;
+            --red: #c52243;
+            --dark-red: #74152c;
+            --text: #ffeef2;
+            --muted: #cbaeb6;
+            --border: #4a2630;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text);
+            font-family: "DM Sans", system-ui, sans-serif;
+            overflow-x: hidden;
+
+            background:
+                radial-gradient(circle at 12% 20%, rgba(255, 89, 126, 0.16) 0 2px, transparent 3px),
+                radial-gradient(circle at 82% 30%, rgba(255, 158, 180, 0.12) 0 2px, transparent 3px),
+                radial-gradient(circle at 65% 80%, rgba(255, 70, 105, 0.12) 0 2px, transparent 3px),
+                radial-gradient(ellipse at 50% 0%, #3b1421 0%, #180d13 42%, #090709 100%);
+        }
+
+        body.deep {
+            background:
+                radial-gradient(ellipse at 50% 0%, #461421, #180b11 48%, #080607);
+        }
+
+        body.redder {
+            background:
+                radial-gradient(ellipse at 50% 0%, #5d1625, #210a11 48%, #080607);
+        }
+
+        body.angry {
+            background:
+                radial-gradient(ellipse at 50% 0%, #80182d, #300912 45%, #080607);
+        }
+
+        body.court {
+            background:
+                linear-gradient(rgba(24, 10, 11, 0.74), rgba(20, 8, 10, 0.9)),
+                repeating-linear-gradient(
+                    90deg,
+                    #2b1512 0 45px,
+                    #321914 45px 90px
+                ),
+                radial-gradient(circle at 50% 5%, #a24a32, transparent 32%);
+        }
+
+        /* Random background emojis */
+        .background-emojis {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .background-emojis span {
+            position: absolute;
+            opacity: 0.12;
+            font-size: 24px;
+            animation: float 7s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            50% {
+                transform: translateY(-13px) rotate(8deg);
+                opacity: 0.19;
+            }
+        }
+
+        /* Anger meter */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            padding: 13px 20px;
+            background: rgba(12, 7, 10, 0.78);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid #351b24;
+        }
+
+        .top-bar {
+            max-width: 920px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .meter-label {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            color: #e6c3ca;
+        }
+
+        .meter {
+            flex: 1;
+            height: 12px;
+            overflow: hidden;
+            border-radius: 99px;
+            background: #321720;
+            box-shadow: inset 0 0 8px #090507;
+        }
+
+        .meter-fill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff9ab0, #c91f43);
+            transition: width 0.8s ease;
+        }
+
+        /* Main card */
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 930px;
+            margin: auto;
+            padding: 55px 20px 75px;
+        }
+
+        .card {
+            padding: 42px;
+            border: 1px solid #542635;
+            border-radius: 30px;
+            background: linear-gradient(
+                145deg,
+                rgba(30, 16, 22, 0.96),
+                rgba(16, 10, 13, 0.96)
+            );
+            box-shadow:
+                0 25px 80px rgba(0, 0, 0, 0.45),
+                0 0 50px rgba(255, 71, 111, 0.06);
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        h1 {
+            margin: 8px 0 18px;
+            color: #ff7998;
+            font: clamp(43px, 8vw, 76px) Pacifico, cursive;
+        }
+
+        h2 {
+            margin: 10px 0 18px;
+            color: #ff86a1;
+            font-size: 34px;
+        }
+
+        h3 {
+            margin: 0 0 8px;
+        }
+
+        p {
+            font-size: 17px;
+            line-height: 1.7;
+        }
+
+        .emoji {
+            font-size: 34px;
+            letter-spacing: 6px;
+        }
+
+        .subject {
+            max-width: 600px;
+            margin: 28px auto;
+            padding: 22px;
+            text-align: left;
+            border: 1px solid #492430;
+            border-radius: 20px;
+            background: #21131a;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .badge {
+            padding: 8px 13px;
+            border: 1px solid #5a2937;
+            border-radius: 999px;
+            background: #2b1720;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        button {
+            padding: 14px 21px;
+            border: 0;
+            border-radius: 15px;
+            color: white;
+            background: linear-gradient(135deg, #cf2b4b, #8e1732);
+            font: inherit;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 10px 22px rgba(190, 25, 60, 0.2);
+            transition: transform 0.18s, box-shadow 0.18s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 13px 28px rgba(190, 25, 60, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 28px 0;
+        }
+
+        .option {
+            min-height: 85px;
+            color: #ffe5eb;
+            text-align: left;
+            border: 2px solid #532634;
+            background: #24151c;
+            box-shadow: none;
+        }
+
+        .option:hover {
+            border-color: #c84a67;
+        }
+
+        .option span {
+            display: block;
+            margin-top: 5px;
+            color: #c9aab3;
+            font-weight: 500;
+        }
+
+        .write-box {
+            margin: 22px 0;
+            padding: 18px;
+            border: 2px dashed #713244;
+            border-radius: 18px;
+            background: #1e1218;
+        }
+
+        .message-box {
+            white-space: pre-wrap;
+            line-height: 1.8;
+            color: #ffeef2;
+            margin-top: 12px;
+        }
+
+        .claims {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 13px;
+        }
+
+        .claim {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            border: 1px solid #492430;
+            border-radius: 14px;
+            background: #21131a;
+        }
+
+        .claim input {
+            width: 20px;
+            height: 20px;
+            accent-color: #d72b4d;
+        }
+
+        .feedback {
+            min-height: 28px;
+            margin: 14px 0;
+            color: #ff8da6;
+            font-weight: 700;
+        }
+
+        .scale {
+            padding: 28px 10px;
+        }
+
+        .love-number {
+            color: #ff819d;
+            text-align: center;
+            font-size: 50px;
+            font-weight: 800;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: #d82b4d;
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            color: #bd9aa5;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* 8-tap page */
+        .escape-zone {
+            position: relative;
+            height: 310px;
+            margin-top: 25px;
+            overflow: hidden;
+            border: 1px dashed #5a2937;
+            border-radius: 20px;
+            background: #120b0f;
+        }
+
+        .run-button {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            white-space: nowrap;
+            transform: translate(-50%, -50%);
+        }
+
+        .run-button:hover {
+            transform: translate(-50%, -50%);
+        }
+
+        .tap-count {
+            color: #cbaeb6;
+            font-size: 14px;
+        }
+
+        .tap-count b {
+            color: #ff86a1;
+        }
+
+        /* Loading animation */
+        .loader {
+            width: 100%;
+            height: 12px;
+            margin: 20px 0;
+            overflow: hidden;
+            border-radius: 99px;
+            background: #331820;
+        }
+
+        .loader span {
+            display: block;
+            width: 0;
+            height: 100%;
+            background: #d72b4d;
+            animation: loading 2.5s ease-in-out infinite;
+        }
+
+        @keyframes loading {
+            0% { width: 5%; }
+            55% { width: 78%; }
+            100% { width: 18%; }
+        }
+
+        /* Final courtroom summons */
+        .summons {
+            max-width: 730px;
+            margin: 25px auto;
+            padding: 42px 40px;
+            color: #291919;
+            border: 7px double #633d30;
+            border-radius: 4px;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(125, 72, 50, 0.08), transparent 25%),
+                radial-gradient(circle at 80% 70%, rgba(125, 72, 50, 0.08), transparent 25%),
+                #f3e8d6;
+            box-shadow: 0 28px 60px rgba(0, 0, 0, 0.55);
+            font-family: Georgia, serif;
+        }
+
+        .summons::before {
+            content: "OFFICIAL COURT SUMMONS";
+            display: block;
+            margin-bottom: 8px;
+            color: #633d30;
+            text-align: center;
+            font: 800 12px "DM Sans", sans-serif;
+            letter-spacing: 3px;
+        }
+
+        .summons::after {
+            content: "CASE NO. 08-LOVE-29";
+            display: block;
+            margin-bottom: 25px;
+            color: #80645b;
+            text-align: center;
+            font: 600 10px "DM Sans", sans-serif;
+            letter-spacing: 2px;
+        }
+
+        .summons h2 {
+            color: #4b201b;
+            text-align: center;
+            font-family: Georgia, serif;
+        }
+
+        .verdict {
+            margin: 20px 0;
+            padding: 15px 0;
+            text-align: center;
+            border-top: 1px solid #9a7468;
+            border-bottom: 1px solid #9a7468;
+        }
+
+        .summons .write-box {
+            color: #3c2521;
+            border-color: #9d7567;
+            background: #fffaf0;
+        }
+
+        .final-message {
+            white-space: pre-wrap;
+            line-height: 1.9;
+            margin-top: 12px;
+        }
+
+        .small {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .fade {
+            animation: fade-in 0.45s ease;
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .card {
+                padding: 25px 18px;
+            }
+
+            .options {
+                grid-template-columns: 1fr;
+            }
+
+            main {
+                padding-top: 35px;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            .summons {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-emojis" id="backgroundEmojis"></div>
+
+    <header>
+        <div class="top-bar">
+            <div class="meter-label">ANGER</div>
+
+            <div class="meter">
+                <div class="meter-fill" id="angerFill"></div>
+            </div>
+
+            <div class="meter-label" id="angerText">100%</div>
+        </div>
+    </header>
+
+    <main id="app"></main>
+
+    <script>
+
+        /*
+         * ============================================================
+         * PERSONAL WRITING
+         * ============================================================
+         *
+         * Only edit these three sections.
+         */
+
+        const QUESTION_1_OPTION_1_MESSAGE = `Soo instead of pizza you are gonna get one kinderjoy lollllll
+        YOU THINK I WOULD QUIT ON ANNOYING YOU A LITTLE ONLY.... BRUHHHHHH
+        `;
+
+        const QUESTION_1_OPTION_2_MESSAGE = `So we're at annoyed.
+        That's unfortunate for me.
+        I would like to officially state that I accept the charges, I have no idea what my lawyer is doing, and I probably deserve whatever punishment the court has decided.
+        BUT before sentencing, I would like to make one thing very clear: YOU CHOSE THE WRONG OPTIONNNNNNNNN
+        `;
+
+        const FINAL_PARAGRAPH = `I AM SOO SORRYYYYYYY
+        I knoww misss I let you down yet again(IDEFKWTFIDBIA)<3. Yesss I apologiseee for my mistakeee thattt howww I let you go donn the path and you are upset now and it is all because of me!!.
+        Forgive me masters of the sins I done(Imma be johnny so that I can sin on you more be a plumber or a doctor 🫦🫦🫦).
+        But yesss please forgive me!!
+        I love you saanvi Mwahh
+        `;
+
+
+        /*
+         * ============================================================
+         * BASIC STATE
+         * ============================================================
+         */
+
+        let anger = 100;
+        let selectedLove = 50;
+        let escapeTaps = 0;
+
+        const app = document.getElementById("app");
+        const angerFill = document.getElementById("angerFill");
+        const angerText = document.getElementById("angerText");
+
+
+        /*
+         * ============================================================
+         * BACKGROUND
+         * ============================================================
+         */
+
+        const backgroundEmojiList = [
+            "💗", "🩷", "💀", "😭", "😡", "🫠",
+            "🧎", "⚖️", "🍕", "👀", "🤨", "💅",
+            "🕵️", "✨", "😌", "🤡", "🫵", "🌚"
+        ];
+
+        function createBackgroundEmojis() {
+            const container = document.getElementById("backgroundEmojis");
+
+            for (let i = 0; i < 34; i++) {
+                const emoji = document.createElement("span");
+
+                emoji.textContent =
+                    backgroundEmojiList[
+                        Math.floor(Math.random() * backgroundEmojiList.length)
+                    ];
+
+                emoji.style.left = `${Math.random() * 96}%`;
+                emoji.style.top = `${Math.random() * 96}%`;
+                emoji.style.animationDelay = `${Math.random() * 6}s`;
+                emoji.style.fontSize = `${18 + Math.random() * 20}px`;
+
+                container.appendChild(emoji);
+            }
+        }
+
+
+        /*
+         * ============================================================
+         * HELPER FUNCTIONS
+         * ============================================================
+         */
+
+        function updateAnger(value) {
+            anger = Math.max(3, Math.min(100, value));
+
+            angerFill.style.width = `${anger}%`;
+            angerText.textContent = `${Math.round(anger)}%`;
+        }
+
+        function showPage(content, bodyClass = "") {
+            document.body.className = bodyClass;
+
+            app.innerHTML = `
+                <section class="card fade">
+                    ${content}
+                </section>
+            `;
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+
+        /*
+         * ============================================================
+         * PAGE 1 — INTRO
+         * ============================================================
+         */
+
+        function showHomePage() {
+            updateAnger(100);
+
+            showPage(`
+                <div class="center">
+
+                    <div class="emoji">
+                        🚨 💗 🚨 💗 🚨
+                    </div>
+
+                    <h1>Whoop whoop emergency!</h1>
+
+                    <p>
+                        <b>
+                            A highly dangerous situation has been reported.
+                        </b>
+                    </p>
+
+                    <div class="subject">
+
+                        <h3>SUBJECT</h3>
+
+                        <p>
+                            One ridiculously cute, mildly rude,
+                            extremely baddie girl.
+                        </p>
+
+                        <h3>ACCUSED</h3>
+
+                        <p>
+                            One boy who has apparently committed
+                            an undisclosed amount of stupidity.
+                        </p>
+
+                        <h3>THREAT LEVEL</h3>
+
+                        <p>
+                            😡😡😡😡😡
+                            <b>CRITICALLY ANGRY</b>
+                        </p>
+
+                    </div>
+
+                    <div class="badges">
+                        <div class="badge">CLASSIFIED 🕵️</div>
+                        <div class="badge">COURT IN SESSION ⚖️</div>
+                        <div class="badge">BOY IN DANGER 💀</div>
+                    </div>
+
+                    <button onclick="showQuestion1()">
+                        Enter crime of scene 🚪
+                    </button>
+
+                </div>
+            `);
+        }
+
+
+        /*
+         * ============================================================
+         * QUESTION 1
+         * ============================================================
+         */
+
+        function showQuestion1() {
+            updateAnger(88);
+
+            showPage(`
+                <div class="center">
+
+                    <h2>Question 1</h2>
+
+                    <p>
+                        <b>
+                            How angry are you with the accused?
+                        </b>
+                    </p>
+
+                </div>
+
+                <div class="options">
+
+                    <button
+                        class="option"
+                        onclick="showQuestion1Option1()"
+                    >
+                        <b>1. 😐 A little</b>
+
+                        <span>
+                            He is mildly stupid, but perhaps salvageable.
+                        </span>
+                    </button>
+
+                    <button
+                        class="option"
+                        onclick="showQuestion1Option2()"
+                    >
+                        <b>2. 😒 Annoyed</b>
+
+                        <span>
+                            He should probably start apologising.
+                        </span>
+                    </button>
+
+                    <button
+                        class="option"
+                        onclick="showQuestion2()"
+                    >
+                        <b>3. 😡 Very angry</b>
+
+                        <span>
+                            His legal team has been notified.
+                        </span>
+                    </button>
+
+                    <button
+                        class="option"
+                        onclick="showQuestion2()"
+                    >
+                        <b>4. ☠️ He should start running</b>
+
+                        <span>
+                            The court refuses to comment.
+                        </span>
+                    </button>
+
+                </div>
+
+                <p class="small center">
+                    Select your current level of wrath.
+                    The investigation will continue.
+                </p>
+            `);
+        }
+
+
+        /*
+         * ============================================================
+         * QUESTION 1 — OPTION 1
+         * ============================================================
+         */
+
+        function showQuestion1Option1() {
+            updateAnger(75);
+
+            showPage(`
+                <div class="center">
+
+                    <h2>Clue 1</h2>
+
+                    <p>
+                        The defendant has been granted
+                        a chance to explain himself.
+                    </p>
+
+                </div>
+
+                <div class="write-box">
+
+                    <b>Message from the accused:</b>
+
+                    <div class="message-box">
+                        ${escapeHtml(QUESTION_1_OPTION_1_MESSAGE)}
+                    </div>
+
+                </div>
+
+                <div style="text-align: right;">
+
+                    <button onclick="showQuestion2()">
+                        Next clue →
+                    </button>
+
+                </div>
+            `);
+        }
+
+
+        /*
+         * ============================================================
+         * QUESTION 1 — OPTION 2
+         * ============================================================
+         */
+
+        function showQuestion1Option2() {
+            updateAnger(80);
+
+            showPage(`
+                <div class="center">
+
+                    <h2>Clue 2</h2>
+
+                    <p>
+                        The situation appears to be
+                        slightly more serious.
+                    </p>
+
+                </div>
+
+                <div class="write-box">
+
+                    <b>Statement from the accused:</b>
+
+                    <div class="message-box">
+                        ${escapeHtml(QUESTION_1_OPTION_2_MESSAGE)}
+                    </div>
+
+                </div>
+
+                <div style="text-align: right;">
+
+                    <button onclick="showQuestion2()">
+                        Next clue →
+                    </button>
+
+                </div>
+            `);
+        }
+
+
+        /*
+         * ============================================================
+         * QUESTION 2 — SELECT ALL
+         * ============================================================
+         */
+
+        function showQuestion2() {
+            updateAnger(66);
+
+            showPage(`
+                <div class="center">
+
+                    <h2>Question 2</h2>
+
+                    <p>
+                        <b>Claim your compensation.</b>
+                    </p>
+
+                    <p class="small">
+                        You may claim the package only after
+                        selecting <b>ALL OF THE ABOVE</b>.
+                    </p>
+
+                </div>
+
+                <div class="claims">
+
+                    <label class="claim">
+                        <input type="checkbox" class="claimBox">
+                        🫂 One emergency hug
+                    </label>
+
+                    <label class="claim">
+                        <input type="checkbox" class="claimBox">
+                        💋 Three kisses
+                    </label>
+
+                    <label class="claim">
+                        <input type="checkbox" class="claimBox">
+                        🍫 Chocolate
+                    </label>
+
+                    <label class="claim">
+                        <input type="checkbox" class="claimBox">
+                        🧎 One proper apology
+                    </label>
+
+                    <label class="claim">
+                        <input type="checkbox" class="claimBox">
+                        🤡 Lifetime access to bully the idiot
+                    </label>
+
+                </div>
+
+                <div
+                    class="feedback center"
+                    id="claimFeedback"
+                ></div>
+
+                <div class="center">
+
+                    <button
+                        id="claimButton"
+                        disabled
+                        onclick="showQuestion3()"
+                    >
+                        Claim everything 💅
+                    </button>
+
+                </div>
+            `);
+
+            setupQuestion2();
+        }
+
+        function setupQuestion2() {
+            const boxes = document.querySelectorAll(".claimBox");
+            const button = document.getElementById("claimButton");
+            const feedback = document.getElementById("claimFeedback");
+
+            boxes.forEach(box => {
+                box.addEventListener("change", () => {
+
+                    const allSelected =
+                        [...boxes].every(box => box.checked);
+
+                    button.disabled = !allSelected;
+
+                    feedback.textContent = allSelected
+                        ? "CORRECT. The court recognises your superior negotiating skills."
+                        : "The claim cannot be processed until ALL OF THE ABOVE are selected.";
+
+                    if (allSelected) {
+                        setTimeout(() => {
+
+                            if (feedback) {
+                                feedback.textContent = "";
+                            }
+
+                        }, 2600);
+                    }
+                });
+            });
+        }
+
+
+        /*
+         * ============================================================
+         * QUESTION 3
+         * ============================================================
+         */
+
+        function showQuestion3() {
+            updateAnger(53);
+
+            showPage(`
+                <div class="center">
+
+                    <h2>Question 3</h2>
+
+                    <p>
+                        <b>
+                            Is the accused actually sorry?
+                        </b>
+                    </p>
+
+                </div>
+
+                <div class="options">
+
+                    <button
+                        class="option"
+                        onclick="wrongQuestion3()"
+                    >
+                        A. No.
+                    </button>
+
+                    <button
+                        class="option"
+                        onclick="wrongQuestion3()"
+                    >
+                        B. Maybe.
+                    </button>
+
+                    <button
+                        class="option"
+                        onclick="wrongQuestion3()"
+                    >
+                        C. Unfortunately yes.
+                    </button>
+
+                    <button
+                        class="option"
+                        onclick="correctQuestion3()"
+                    >
+                        D. He is suffering from severe stupidity.
+                    </button>
+
+                </div>
+
+                <div
+                    class="feedback center"
+                    id="question3Feedback"
+                ></div>
+            `);
+        }
+
+        function wrongQuestion3() {
+            document.getElementById("question3Feedback").textContent =
+                "❌ WRONG. Choose again, your honour.";
+        }
+
+        function correctQuestion3() {
+            updateAnger(44);
+
+            showPage(`
+                <div class="center">
+
+                    <h2>Correct.</h2>
+
+                    <p>
+                        Diagnosis confirmed:
+                        <b>Chronic Dumbassery™</b>.
+                    </p>
+
+                    <p class="small">
+                        The court recommends continued exposure
+                        to the pretty girl.
+                    </p>
+
+                    <button onclick="showQuestion4()">
+                        Continue investigation →
+                    </button>
+
+                </div>
+            `);
+        }
+
+
+        /*
+         * ============================================================
+         * QUESTION 4 — SELECT ALL
+         * ============================================================
+         */
+
+        function showQuestion4() {
+            updateAnger(34);
+
+            showPage(`
+                <div class="center">
+
+                    <h2>Question 4</h2>
+
+                    <p>
+                        <b>
+                            If he makes you laugh right now,
+                            does his sentence get reduced?
+                        </b>
+                    </p>
+
+                </div>
+
+                <div class="claims">
+
+                    <label class="claim">
+                        <input
+                            type="checkbox"
+                            class="question4Box"
+                        >
+                        YES
+                    </label>
+
+                    <label class="claim">
+                        <input
+                            type="checkbox"
+                            class="question4Box"
+                        >
+                        I WILL LAUGH BUT HE'S STILL GUILTY
+                    </label>
+
+                    <label class="claim">
+                        <input
+                            type="checkbox"
+                            class="question4Box"
+                        >
+                        FINE, BUT HE'S ON THIN ICE
+                    </label>
+
+                </div>
+
+                <div
+                    class="feedback center"
+                    id="question4Feedback"
+                ></div>
+
+                <div class="center">
+
+                    <button
+                        id="question4Button"
+                        disabled
+                        onclick="showQuestion5()"
+                    >
+                        Proceed
+                    </button>
+
+                </div>
+            `);
+
+            setupQuestion4();
+        }
+
+        function setupQuestion4() {
+            const boxes =
+                document.querySelectorAll(".question4Box");
+
+            const button =
+                document.getElementById("question4Button");
+
+            const feedback =
+                document.getElementById("question4Feedback");
+
+            boxes.forEach(box => {
+
+                box.addEventListener("change", () => {
+
+                    const allSelected =
+                        [...boxes].every(box => box.checked);
+
+                    button.disabled = !allSelected;
+
+                    feedback.textContent = allSelected
+                        ? "CORRECT. ALL OF THE ABOVE."
+                        : "The court demands ALL OF THE ABOVE.";
+
+                    if (allSelected) {
+
+                        setTimeout(() => {
+
+                            if (feedback) {
+                                feedback.textContent = "";
+                            }
+
+                        }, 2400);
+                    }
+                });
+            });
+        }
+
+
+        /*
+         * ============================================================
+         * QUESTION 5 — LOVE METER
+         * ============================================================
+         */
+
+        function showQuestion5() {
+            updateAnger(22);
+
+            showPage(`
+                <div class="center">
+
+                    <h2>Question 5</h2>
+
+                    <p>
+                        <b>How much do you love him?</b>
+                    </p>
+
+                    <p class="small">
+                        Scientific accuracy is questionable.
+                    </p>
+
+                </div>
+
+                <div class="scale">
+
+                    <div
+                        class="love-number"
+                        id="loveNumber"
+                    >
+                        50%
+                    </div>
+
+                    <input
+                        id="loveRange"
+                        type="range"
+                        min="0"
+                        max="100"
+                        value="50"
+                    >
+
+                    <div class="range-labels">
+                        <span>barely</span>
+                        <span>quite a bit</span>
+                        <span>hopelessly</span>
+                    </div>
+
+                </div>
+
+                <div class="center">
+
+                    <p id="loveResponse">
+                        <b>Current result:</b>
+                        suspiciously affectionate.
+                    </p>
+
+                    <button onclick="showEscapePage()">
+                        Submit highly classified answer →
+                    </button>
+
+                </div>
+            `);
+
+            setupLoveMeter();
+        }
+
+        function setupLoveMeter() {
+
+            const range =
+                document.getElementById("loveRange");
+
+            const number =
+                document.getElementById("loveNumber");
+
+            const response =
+                document.getElementById("loveResponse");
+
+            range.addEventListener("input", () => {
+
+                selectedLove = range.value;
+
+                number.textContent =
+                    `${range.value}%`;
+
+                let result;
+
+                if (range.value < 25) {
+                    result = "the court is concerned";
+                }
+                else if (range.value < 60) {
+                    result = "acceptable levels of affection";
+                }
+                else if (range.value < 85) {
+                    result = "the court is getting suspicious";
+                }
+                else {
+                    result =
+                        "ABSOLUTELY RIDICULOUS LEVELS OF LOVE";
+                }
+
+                response.innerHTML =
+                    `<b>Current result:</b> ${result}`;
+            });
+        }
+
+
+        /*
+         * ============================================================
+         * 8-TAP VERDICT PAGE
+         * ============================================================
+         */
+
+        function showEscapePage() {
+
+            updateAnger(14);
+            escapeTaps = 0;
+
+            showPage(`
+                <div class="center">
+
+                    <h2>FAST-TRACK TO THE VERDICT</h2>
+
+                    <p>
+                        You've reached the final stage.
+                    </p>
+
+                    <p>
+                        <b>
+                            Unfortunately, the button has trust issues.
+                        </b>
+                    </p>
+
+                    <p class="tap-count">
+                        Successful taps:
+                        <b id="tapCount">0 / 8</b>
+                    </p>
+
+                </div>
+
+                <div
+                    class="escape-zone"
+                    id="escapeZone"
+                >
+
+                    <button
+                        class="run-button"
+                        id="runButton"
+                        onclick="runAwayButton()"
+                    >
+                        TAP ME TO REACH THE VERDICT
+                    </button>
+
+                </div>
+
+                <p class="small center">
+                    It only needs 8 taps. Probably. Maybe.
+                </p>
+            `);
+        }
+
+        function runAwayButton() {
+
+            escapeTaps++;
+
+            const button =
+                document.getElementById("runButton");
+
+            const zone =
+                document.getElementById("escapeZone");
+
+            const counter =
+                document.getElementById("tapCount");
+
+            counter.textContent =
+                `${escapeTaps} / 8`;
+
+            if (escapeTaps >= 8) {
+                showFinalVerdict();
+                return;
+            }
+
+            const maxX =
+                zone.clientWidth -
+                button.offsetWidth -
+                20;
+
+            const maxY =
+                zone.clientHeight -
+                button.offsetHeight -
+                20;
+
+            button.style.left =
+                `${10 + Math.random() * Math.max(10, maxX)}px`;
+
+            button.style.top =
+                `${10 + Math.random() * Math.max(10, maxY)}px`;
+
+            button.style.transform = "none";
+
+            const buttonTexts = [
+                "TRY AGAIN",
+                "NOPE",
+                "TOO SLOW",
+                "HEHE",
+                "ALMOST",
+                "KEEP GOING",
+                "OKAY ONE MORE"
+            ];
+
+            button.textContent =
+                buttonTexts[
+                    Math.min(
+                        escapeTaps - 1,
+                        buttonTexts.length - 1
+                    )
+                ];
+        }
+
+
+        /*
+         * ============================================================
+         * FINAL COURT SUMMONS
+         * ============================================================
+         */
+
+        function showFinalVerdict() {
+
+            updateAnger(5);
+
+            document.body.className = "court";
+
+            showPage(`
+                <div class="center">
+
+                    <h2 style="color: #ffb19f;">
+                        FINAL VERDICT
+                    </h2>
+
+                    <p>
+                        <b>
+                            The Court of Extremely Serious Nonsense
+                            is now in session.
+                        </b>
+                    </p>
+
+                    <div class="loader">
+                        <span></span>
+                    </div>
+
+                    <p class="small">
+                        Calibrating anger meter...
+                        negotiating sentence...
+                        locating pizza...
+                    </p>
+
+                </div>
+
+                <div class="summons">
+
+                    <h2>
+                        SUMMONS & FINAL VERDICT
+                    </h2>
+
+                    <div class="verdict">
+
+                        <p>
+                            <b>My baby being so cute</b>
+                        </p>
+
+                        <p>
+                            <b>The hottest babygirl</b>
+                        </p>
+
+                        <p>
+                            <b>Very rudeee btw!!</b>
+                        </p>
+
+                        <p>
+                            <b>
+                                The baddie core who I would let
+                                her ruin my life
+                            </b>
+                        </p>
+
+                    </div>
+
+                    <div class="write-box">
+
+                        <b>Statement from the accused:</b>
+
+                        <div class="final-message">
+                            ${escapeHtml(FINAL_PARAGRAPH)}
+                        </div>
+
+                    </div>
+
+                    <p>
+                        <b>FINAL SENTENCE:</b>
+                    </p>
+
+                    <p>
+                        🍕 Pizza.
+                        The court has ruled.
+                    </p>
+
+                    <p>
+                        🍕 More pizza.
+                        This is non-negotiable.
+                    </p>
+
+                    <p>
+                        The accused remains an idiot,
+                        but unfortunately a sincere one.
+                    </p>
+
+                    <p>
+                        The defendant is ordered to continue
+                        being cute and rudeee.
+                    </p>
+
+                    <div
+                        class="center"
+                        style="margin-top: 28px;"
+                    >
+
+                        <button onclick="closeCase()">
+                            Accept verdict
+                        </button>
+
+                    </div>
+
+                </div>
+            `);
+        }
+
+
+        /*
+         * ============================================================
+         * CASE CLOSED
+         * ============================================================
+         */
+
+        function closeCase() {
+
+            updateAnger(3);
+
+            showPage(`
+                <div class="center">
+
+                    <h1>CASE CLOSED.</h1>
+
+                    <p>
+                        The court has ruled.
+                    </p>
+
+                    <p>
+                        <b>
+                            Unfortunately, the accused
+                            is still obsessed with you.
+                        </b>
+                    </p>
+
+                    <p>
+                        Thank you for your cooperation,
+                        your honour.
+                    </p>
+
+                </div>
+            `);
+        }
+
+
+        /*
+         * ============================================================
+         * START WEBSITE
+         * ============================================================
+         */
+
+        createBackgroundEmojis();
+        showHomePage();
+
+    </script>
+</body>
+</html>
